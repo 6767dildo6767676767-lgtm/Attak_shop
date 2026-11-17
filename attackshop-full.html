@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AttackShop — наклейки с характером</title>
+<meta name="description" content="AttackShop — авторские чёрно-белые наклейки. Выбирай дизайн и заказывай в Telegram.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23000'/><text x='50' y='68' font-size='55' font-family='Arial Black' font-weight='900' fill='%23fff' text-anchor='middle'>A</text></svg>">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0a; --bg2: #111; --card: #141414;
+    --text: #f2f2f2; --muted: #9a9a9a;
+    --accent: #ffffff; --radius: 16px;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow-x: hidden;
+  }
+  ::selection { background: #fff; color: #000; }
+
+  /* ===== HEADER ===== */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 5vw; background: rgba(10,10,10,.92);
+    backdrop-filter: blur(10px); border-bottom: 1px solid #222;
+  }
+  .logo {
+    font-weight: 900; font-size: 1.25rem; letter-spacing: 2px;
+    text-transform: uppercase; text-decoration: none; color: #fff;
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .logo span {
+    font-weight: 300; color: var(--muted); font-size: .9rem; letter-spacing: 1px;
+  }
+  nav { display: flex; gap: 28px; }
+  nav a {
+    color: var(--muted); text-decoration: none; font-size: .95rem;
+    transition: color .2s;
+  }
+  nav a:hover { color: #fff; }
+  .btn-telegram {
+    background: #fff; color: #000; border: none; cursor: pointer;
+    padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: .9rem;
+    text-decoration: none; display: inline-block; transition: transform .15s, box-shadow .15s;
+  }
+  .btn-telegram:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,255,255,.15); }
+  .burger {
+    display: none; background: none; border: none; cursor: pointer; z-index: 110;
+  }
+  .burger span {
+    display: block; width: 26px; height: 2px; background: #fff; margin: 6px 0;
+    transition: .3s;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative; min-height: 88vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 5vw; overflow: hidden;
+  }
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 30%, rgba(255,255,255,.07), transparent),
+      repeating-linear-gradient(45deg, transparent 0 60px, rgba(255,255,255,.02) 60px 61px);
+  }
+  .kicker {
+    letter-spacing: 6px; font-size: .8rem; color: var(--muted);
+    text-transform: uppercase; margin-bottom: 20px; position: relative;
+  }
+  h1 {
+    font-size: clamp(2.6rem, 8vw, 6rem); line-height: 1.02;
+    font-weight: 900; text-transform: uppercase; letter-spacing: -2px;
+    position: relative;
+  }
+  h1 .outline {
+    color: transparent; -webkit-text-stroke: 2px #fff;
+  }
+  .hero p.sub {
+    max-width: 520px; color: var(--muted); margin: 24px 0 36px;
+    font-size: 1.1rem; line-height: 1.6; position: relative;
+  }
+  .btn-main {
+    display: inline-block; background: #fff; color: #000;
+    padding: 16px 34px; border-radius: 40px; font-weight: 800;
+    text-decoration: none; font-size: 1rem; width: fit-content;
+    position: relative; transition: transform .15s, box-shadow .15s;
+  }
+  .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,255,255,.2); }
+
+  .spin-badge {
+    position: absolute; right: 6vw; top: 50%; transform: translateY(-50%);
+    width: 170px; height: 170px; animation: spin 14s linear infinite;
+  }
+  .spin-badge svg { width: 100%; height: 100%; }
+  @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+  .marquee {
+    border-top: 1px solid #222; border-bottom: 1px solid #222;
+    overflow: hidden; white-space: nowrap; padding: 14px 0;
+    background: var(--bg2);
+  }
+  .marquee div {
+    display: inline-block; animation: slide 22s linear infinite;
+    font-weight: 900; text-transform: uppercase; letter-spacing: 3px; font-size: .95rem;
+  }
+  .marquee span { margin: 0 30px; }
+  .marquee .dim { color: var(--muted); }
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ===== CATALOG ===== */
+  section { padding: 90px 5vw; }
+  .sec-head { margin-bottom: 44px; }
+  .sec-head .tag {
+    color: var(--muted); font-size: .8rem; letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+  .sec-head h2 {
+    font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight: 900;
+    text-transform: uppercase; letter-spacing: -1px; margin-top: 8px;
+  }
+  .price-note { color: var(--muted); margin-top: 10px; }
+  .search-wrap { position: relative; max-width: 420px; margin: 26px 0 0; }
+  .search-wrap input {
+    width: 100%; padding: 14px 18px 14px 46px;
+    background: var(--card); border: 1px solid #2a2a2a; border-radius: 40px;
+    color: #fff; font-size: 1rem; outline: none; transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: #555; }
+  .search-wrap::before {
+    content: "🔍"; position: absolute; left: 16px; top: 50%;
+    transform: translateY(-50%); font-size: .95rem; opacity: .6;
+  }
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 26px; margin-top: 40px;
+  }
+  .card {
+    background: var(--card); border: 1px solid #222; border-radius: var(--radius);
+    overflow: hidden; transition: transform .2s, border-color .2s;
+    display: flex; flex-direction: column;
+  }
+  .card:hover { transform: translateY(-6px); border-color: #444; }
+  .sticker-art {
+    height: 230px; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .sticker-art::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.08), transparent 60%);
+  }
+  .sticker {
+    width: 150px; height: 190px; background: #fff; border-radius: 10px;
+    transform: rotate(-6deg); display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 14px; color: #000; font-weight: 900;
+    text-transform: uppercase; font-size: .95rem; line-height: 1.25;
+    box-shadow: 0 14px 30px rgba(0,0,0,.55); letter-spacing: .5px;
+    transition: transform .25s;
+  }
+  .card:hover .sticker { transform: rotate(3deg) scale(1.05); }
+  .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .cat-tag { color: var(--muted); font-size: .75rem; letter-spacing: 2px; text-transform: uppercase; }
+  .card-body h3 { font-size: 1.15rem; font-weight: 800; }
+  .price-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 10px; gap: 10px;
+  }
+  .price { font-weight: 900; font-size: 1.1rem; white-space: nowrap; }
+  .qty {
+    background: #1e1e1e; color: #fff; border: 1px solid #333; border-radius: 10px;
+    padding: 9px 10px; font-size: .9rem; cursor: pointer; outline: none;
+  }
+  .btn-buy {
+    margin-top: 14px; background: #fff; color: #000; border: none;
+    padding: 13px; border-radius: 12px; font-weight: 800; cursor: pointer;
+    font-size: .95rem; transition: opacity .15s, transform .15s;
+  }
+  .btn-buy:hover { transform: translateY(-2px); opacity: .9; }
+  .no-results {
+    display: none; text-align: center; color: var(--muted);
+    padding: 60px 0; font-size: 1.05rem;
+  }
+
+  /* ===== ABOUT ===== */
+  .about-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 26px;
+  }
+  .about-card {
+    background: var(--card); border: 1px solid #222; border-radius: var(--radius);
+    padding: 34px; transition: transform .2s, border-color .2s;
+  }
+  .about-card:hover { transform: translateY(-4px); border-color: #444; }
+  .about-card .num { color: var(--muted); font-weight: 900; font-size: .85rem; letter-spacing: 3px; }
+  .about-card h3 { margin: 14px 0 12px; font-size: 1.35rem; font-weight: 800; }
+  .about-card p { color: var(--muted); line-height: 1.65; }
+
+  /* ===== CONTACT ===== */
+  .contact {
+    text-align: center; background:
+      radial-gradient(ellipse 50% 80% at 50% 100%, rgba(255,255,255,.06), transparent);
+  }
+  .contact h2 { font-size: clamp(2rem, 6vw, 4rem); font-weight: 900; text-transform: uppercase; }
+  .contact p { color: var(--muted); margin: 18px 0 34px; font-size: 1.1rem; }
+  .tg-big {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: #fff; color: #000; padding: 18px 42px; border-radius: 50px;
+    font-weight: 900; font-size: 1.25rem; text-decoration: none;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .tg-big:hover { transform: translateY(-3px); box-shadow: 0 12px 34px rgba(255,255,255,.2); }
+
+  /* ===== FOOTER ===== */
+  footer {
+    border-top: 1px solid #222; padding: 34px 5vw;
+    display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between;
+    align-items: center; color: var(--muted); font-size: .9rem;
+  }
+  footer a { color: #fff; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.75);
+    display: none; align-items: center; justify-content: center; z-index: 200;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card); border: 1px solid #333; border-radius: 20px;
+    padding: 40px; max-width: 400px; width: 90%; text-align: center;
+    animation: pop .25s ease;
+  }
+  @keyframes pop { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal h3 { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; margin-bottom: 12px; }
+  .modal p { color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+  .modal .m-btns { display: flex; flex-direction: column; gap: 10px; }
+  .modal .tg-go {
+    background: #fff; color: #000; padding: 14px; border-radius: 12px;
+    font-weight: 800; text-decoration: none; font-size: 1rem;
+  }
+  .modal .cancel {
+    background: none; border: 1px solid #444; color: var(--muted);
+    padding: 12px; border-radius: 12px; cursor: pointer; font-size: .95rem;
+  }
+  .toast {
+    position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(120px);
+    background: #fff; color: #000; padding: 14px 26px; border-radius: 40px;
+    font-weight: 700; z-index: 300; transition: transform .35s ease; box-shadow: 0 10px 30px rgba(0,0,0,.5);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 780px) {
+    nav {
+      position: fixed; inset: 0; background: rgba(10,10,10,.98);
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 34px; font-size: 1.5rem; transform: translateX(100%);
+      transition: transform .3s ease;
+    }
+    nav.open { transform: translateX(0); }
+    nav a { font-size: 1.4rem; }
+    .burger { display: block; }
+    .burger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    .btn-telegram { display: none; }
+    .spin-badge { width: 110px; height: 110px; right: 5vw; opacity: .5; }
+    .btn-telegram.mobile-tg { display: inline-block; margin-top: 30px; padding: 14px 30px; font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a class="logo" href="#top">ATTACK<span>·attackshop</span></a>
+  <nav id="nav">
+    <a href="#catalog" onclick="closeMenu()">Каталог</a>
+    <a href="#about" onclick="closeMenu()">О нас</a>
+    <a href="#contact" onclick="closeMenu()">Связь</a>
+    <a class="btn-telegram mobile-tg" href="#" onclick="openTelegram('Общий вопрос'); return false;">Написать в Telegram ↗</a>
+  </nav>
+  <a class="btn-telegram" href="#" onclick="openTelegram('Общий вопрос'); return false;">Написать в Telegram ↗</a>
+  <button class="burger" id="burger" onclick="toggleMenu()" aria-label="Меню">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="spin-badge">
+    <svg viewBox="0 0 200 200">
+      <defs><path id="circlePath" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
+      <circle cx="100" cy="100" r="90" fill="#fff"/>
+      <circle cx="100" cy="100" r="60" fill="none" stroke="#000" stroke-width="2"/>
+      <text fill="#000" font-size="16.5" font-weight="900" letter-spacing="3.5">
+        <textPath href="#circlePath">STICKERS WITH ATTITUDE • ATTACKSHOP • </textPath>
+      </text>
+      <text x="100" y="106" text-anchor="middle" font-size="22" font-weight="900" fill="#000">A</text>
+    </svg>
+  </div>
+  <div class="kicker">STICKERS WITH ATTITUDE</div>
+  <h1>НАКЛЕЙКИ,<br><span class="outline">КОТОРЫЕ</span><br>ВЫДЕЛЯЮТ.</h1>
+  <p class="sub">Собери свой стиль. Авторские дизайны, чёрно-белая эстетика и характер в каждой детали.</p>
+  <a class="btn-main" href="#catalog">Смотреть каталог →</a>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div>
+    <span>150 ₽ / ШТ.</span><span class="dim">◆</span><span>ORIGINAL DESIGN</span><span class="dim">◆</span>
+    <span>ДОСТАВКА ПО ВСЕЙ РОССИИ</span><span class="dim">◆</span><span>ЧЁРНО-БЕЛАЯ ЭСТЕТИКА</span><span class="dim">◆</span>
+    <span>150 ₽ / ШТ.</span><span class="dim">◆</span><span>ORIGINAL DESIGN</span><span class="dim">◆</span>
+    <span>ДОСТАВКА ПО ВСЕЙ РОССИИ</span><span class="dim">◆</span><span>ЧЁРНО-БЕЛАЯ ЭСТЕТИКА</span><span class="dim">◆</span>
+  </div>
+</div>
+
+<!-- CATALOG -->
+<section id="catalog">
+  <div class="sec-head">
+    <div class="tag">CATALOG</div>
+    <h2>Популярные наклейки</h2>
+    <div class="price-note">Выбирай дизайн — каждая наклейка по одной цене: 150 ₽ за штуку</div>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Поиск по каталогу…" oninput="filterCards()">
+    </div>
+  </div>
+
+  <div class="grid" id="grid">
+
+    <div class="card" data-name="i need attack not drugs original design">
+      <div class="sticker-art"><div class="sticker">I NEED<br>ATTACK<br>NOT DRUGS</div></div>
+      <div class="card-body">
+        <div class="cat-tag">Original design</div>
+        <h3>I Need Attack Not Drugs</h3>
+        <div class="price-row">
+          <div class="price">150 ₽</div>
+          <select class="qty" id="qty-1">
+            <option value="1">1 шт.</option>
+            <option value="3">3 шт.</option>
+            <option value="5">5 шт.</option>
+          </select>
+        </div>
+        <button class="btn-buy" onclick="openTelegram('I Need Attack Not Drugs', 'qty-1')">Выбрать ↗</button>
+      </div>
+    </div>
+
+    <div class="card" data-name="attackshop logo brand sticker">
+      <div class="sticker-art"><div class="sticker" style="font-size:1.5rem">ATTACK<br>·<br>SHOP</div></div>
+      <div class="card-body">
+        <div class="cat-tag">Brand sticker</div>
+        <h3>AttackShop Logo</h3>
+        <div class="price-row">
+          <div class="price">150 ₽</div>
+          <select class="qty" id="qty-2">
+            <option value="1">1 шт.</option>
+            <option value="3">3 шт.</option>
+            <option value="5">5 шт.</option>
+          </select>
+        </div>
+        <button class="btn-buy" onclick="openTelegram('AttackShop Logo', 'qty-2')">Выбрать ↗</button>
+      </div>
+    </div>
+
+    <div class="card" data-name="slick tires type auto street">
+      <div class="sticker-art"><div class="sticker" style="border-radius:50%; width:170px; height:170px; font-size:1.05rem">SLICK<br>TIRES<br>TYPE</div></div>
+      <div class="card-body">
+        <div class="cat-tag">Auto / Street</div>
+        <h3>Slick Tires Type</h3>
+        <div class="price-row">
+          <div class="price">150 ₽</div>
+          <select class="qty" id="qty-3">
+            <option value="1">1 шт.</option>
+            <option value="3">3 шт.</option>
+            <option value="5">5 шт.</option>
+          </select>
+        </div>
+        <button class="btn-buy" onclick="openTelegram('Slick Tires Type', 'qty-3')">Выбрать ↗</button>
+      </div>
+    </div>
+
+    <div class="card" data-name="gnida statement">
+      <div class="sticker-art"><div class="sticker" style="font-size:1.6rem">GNIDA</div></div>
+      <div class="card-body">
+        <div class="cat-tag">Statement</div>
+        <h3>GNIDA</h3>
+        <div class="price-row">
+          <div class="price">150 ₽</div>
+          <select class="qty" id="qty-4">
+            <option value="1">1 шт.</option>
+            <option value="3">3 шт.</option>
+            <option value="5">5 шт.</option>
+          </select>
+        </div>
+        <button class="btn-buy" onclick="openTelegram('GNIDA', 'qty-4')">Выбрать ↗</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="no-results" id="noResults">Ничего не найдено. Попробуй другой запрос.</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-head">
+    <div class="tag">ABOUT</div>
+    <h2>О нас</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="num">01</div>
+      <h3>Не просто наклейки.</h3>
+      <p>AttackShop — это детали, которые говорят за тебя. Выбирай свой дизайн и добавляй немного характера вещам вокруг: ноутбук, скейт, авто или холодильник — всё подойдёт.</p>
+    </div>
+    <div class="about-card">
+      <div class="num">02</div>
+      <h3>Просто выбрать и заказать.</h3>
+      <p>Все представленные дизайны — 150 ₽ за штуку. По наличию, доставке и оформлению заказа напиши напрямую в Telegram — отвечаем быстро.</p>
+    </div>
+    <div class="about-card">
+      <div class="num">03</div>
+      <h3>Качество, а не компромисс.</h3>
+      <p>Плотный винил, стойкая печать и матовая поверхность. Наклейки переживают дождь, мойку и поездки — как и положено стрит-эстетике.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact">
+  <h2>Есть вопросы?</h2>
+  <p>Напиши нам — поможем с выбором и заказом.</p>
+  <a class="tg-big" href="#" onclick="openTelegram('Общий вопрос'); return false;">✈ @Attack_Qaza</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>© 2026 ATTACKSHOP — Наклейки с характером.</div>
+  <div>Telegram: <a href="#" onclick="openTelegram('Общий вопрос'); return false;">@Attack_Qaza</a></div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3 id="modalTitle">Открываем Telegram…</h3>
+    <p id="modalText">Готовим сообщение — тебе останется только отправить его.</p>
+    <div class="m-btns">
+      <a class="tg-go" id="modalLink" href="#" target="_blank" rel="noopener">Открыть Telegram ↗</a>
+      <button class="cancel" onclick="closeModal()">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Готово!</div>
+
+<script>
+  var TG_USER = "Attack_Qaza";
+
+  function tgLink(orderText) {
+    return "https://t.me/" + TG_USER + "?text=" +
+      encodeURIComponent(orderText);
+  }
+
+  function openTelegram(item, qtyId) {
+    var qty = 1;
+    if (qtyId) {
+      var sel = document.getElementById(qtyId);
+      if (sel) qty = sel.value;
+    }
+    var text;
+    if (item && item !== "Общий вопрос") {
+      var sum = qty * 150;
+      text = "Привет! Хочу заказать наклейку «" + item + "» — " + qty + " шт. (" + sum + " ₽)";
+    } else {
+      text = "Привет! Пишу с сайта AttackShop — есть вопрос.";
+    }
+    var link = tgLink(text);
+    var mLink = document.getElementById("modalLink");
+    mLink.href = link;
+    document.getElementById("modalTitle").textContent = (item && item !== "Общий вопрос")
+      ? "Открываем Telegram…" : "Есть вопрос? Пиши!";
+    document.getElementById("modalText").textContent = (item && item !== "Общий вопрос")
+      ? "Готовим сообщение: «" + item + "» — " + qty + " шт. Тебе останется только отправить его."
+      : "Открой Telegram и напиши нам — ответим быстро.";
+    document.getElementById("modalOverlay").classList.add("open");
+  }
+
+  function closeModal() {
+    document.getElementById("modalOverlay").classList.remove("open");
+  }
+
+  function toggleMenu() {
+    document.getElementById("nav").classList.toggle("open");
+    document.getElementById("burger").classList.toggle("open");
+  }
+  function closeMenu() {
+    document.getElementById("nav").classList.remove("open");
+    document.getElementById("burger").classList.remove("open");
+  }
+
+  function filterCards() {
+    var q = document.getElementById("searchInput").value.toLowerCase().trim();
+    var cards = document.querySelectorAll("#grid .card");
+    var visible = 0;
+    cards.forEach(function(c) {
+      var name = c.getAttribute("data-name");
+      var show = !q || name.indexOf(q) !== -1;
+      c.style.display = show ? "" : "none";
+      if (show) visible++;
+    });
+    document.getElementById("noResults").style.display = visible ? "none" : "block";
+  }
+
+  var toastTimer;
+  function showToast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2500);
+  }
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") closeModal();
+  });
+
+  showToast("Наклейки по 150 ₽ ждут тебя в каталоге");
+</script>
+</body>
+</html>
